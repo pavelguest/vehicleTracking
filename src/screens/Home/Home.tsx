@@ -1,14 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar, Text, View } from 'react-native';
 import { useStyles } from './Home.styles';
 import { THomeProps } from './Home.types';
-import { memo, useRef } from 'react';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { memo } from 'react';
+import {
+  getStopsAndWaypointsData,
+  getVehiclesTrackingData,
+} from '../../api/vehicleApi';
+import dayjs from 'dayjs';
 
 const Home: React.FC<THomeProps> = () => {
   const styles = useStyles();
 
-  const selectVehicleCategoriesModalRef = useRef<BottomSheetModal>(null);
+  useEffect(() => {
+    const currentDate = dayjs().format('DD.MM.YYYY');
+    const vehicleNumber = '01';
+    getStopsAndWaypointsData(currentDate, vehicleNumber)
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    getVehiclesTrackingData(vehicleNumber)
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <View style={styles.container}>
