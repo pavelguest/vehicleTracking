@@ -5,7 +5,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'jest'],
   rules: {
     'object-curly-spacing': ['error', 'always'],
-    'prettier/prettier': ['error', {bracketSpacing: true}],
+    'prettier/prettier': ['error', { bracketSpacing: true }],
   },
   overrides: [
     {
@@ -15,8 +15,8 @@ module.exports = {
         '@typescript-eslint/no-shadow': ['error'],
         'no-shadow': 'off',
         'no-undef': 'off',
-        'no-console': ['warn', {allow: ['warn', 'error']}],
-        'react/no-unstable-nested-components': ['warn', {allowAsProps: true}],
+        'no-console': ['warn', { allow: ['warn', 'error'] }],
+        'react/no-unstable-nested-components': ['warn', { allowAsProps: true }],
       },
     },
   ],
