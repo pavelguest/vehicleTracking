@@ -48,3 +48,20 @@ export interface IStopPointsData {
   routes: null;
   location: string;
 }
+
+export interface IAutosData {
+  autos: IAutoData[];
+  status: string;
+}
+
+export interface IAutoData {
+  kodPe: number;
+  routeType: number;
+  routeId: string;
+  routeNumber: string;
+  n: number;
+  e: number;
+  course: number;
+  gosNom: string;
+  ngr: string;
+}

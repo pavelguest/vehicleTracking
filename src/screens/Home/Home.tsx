@@ -8,6 +8,7 @@ import React, {
 import { StatusBar } from 'react-native';
 import { useStyles } from './Home.styles';
 import {
+  IAutosData,
   IStopPointsData,
   IStopsAndWaPointsData,
   THomeProps,
@@ -28,12 +29,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { SelectStopPoints } from '../../modals/SelectStopPoints';
-// import { WebView } from 'react-native-webview';
 
 const DEFAULT_COORDINATE: LatLng = {
   lat: 58.0105,
   lng: 56.2502,
 };
+
+const DEFAULT_VEHICLE_NUMBER = '01';
 
 const regexStopPoints = /POINT \((\d+\.\d+) (\d+\.\d+)\)/;
 
@@ -48,25 +50,31 @@ const Home: React.FC<THomeProps> = () => {
     undefined,
   );
 
+  const [autosData, setAutosData] = useState<IAutosData | undefined>(undefined);
+
   const selectStopPointsModalRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     const currentDate = dayjs().format('DD.MM.YYYY');
-    const vehicleNumber = '01';
-    getStopsAndWaypointsData(currentDate, vehicleNumber)
+    getStopsAndWaypointsData(currentDate, DEFAULT_VEHICLE_NUMBER)
       .then(response => {
         setStopsAndWaypoints(response.data);
       })
       .catch(error => {
-        console.log(error);
+        console.warn(error);
       });
-    getVehiclesTrackingData(vehicleNumber)
-      .then(response => {
-        // console.log(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+  }, []);
+
+  useEffect(() => {
+    setInterval(() => {
+      getVehiclesTrackingData(DEFAULT_VEHICLE_NUMBER)
+        .then(response => {
+          setAutosData(response.data);
+        })
+        .catch(error => {
+          console.warn(error);
+        });
+    }, 10000);
   }, []);
 
   const fwdStopPointsLocation: MapMarker[] | undefined = useMemo(() => {
@@ -80,14 +88,13 @@ const Home: React.FC<THomeProps> = () => {
               lat: match[2],
             },
             size: [32, 32],
-            icon: '📍',
-            title: stopPoints.stoppointName,
+            icon: '🚏',
             id: stopPoints.stoppointId,
           };
         }
       }
     });
-  }, [stopsAndWaypoints, regexStopPoints]);
+  }, [stopsAndWaypoints]);
 
   const bkwdStopPointsLocation: MapMarker[] | undefined = useMemo(() => {
     return stopsAndWaypoints?.bkwdStoppoints.map(stopPoints => {
@@ -100,14 +107,55 @@ const Home: React.FC<THomeProps> = () => {
               lat: match[2],
             },
             size: [32, 32],
-            icon: '📍',
-            title: stopPoints.stoppointName,
+            icon: '🚏',
             id: stopPoints.stoppointId,
           };
         }
       }
     });
-  }, [stopsAndWaypoints, regexStopPoints]);
+  }, [stopsAndWaypoints]);
+
+  const autosPointsLocation: MapMarker[] | undefined = useMemo(() => {
+    return autosData?.autos.map(auto => {
+      if (auto) {
+        return {
+          position: {
+            lng: auto.e,
+            lat: auto.n,
+          },
+          size: [32, 32],
+          icon: '🚌',
+          title: auto.gosNom,
+          id: 'car',
+        };
+      }
+    });
+  }, [autosData?.autos]);
+
+  const fwdTrackGeometry: MapShape[] | undefined = useMemo(() => {
+    const matches = stopsAndWaypoints?.bkwdTrackGeom.match(regexTrackGeometry);
+
+    if (matches) {
+      const coordinates = matches.map(match => {
+        const latlng = match
+          .replace('(', '')
+          .replace(',', '')
+          .trim()
+          .split(' ');
+
+        return {
+          lng: latlng[0],
+          lat: latlng[1],
+        };
+      });
+
+      return {
+        shapeType: MapShapeType.POLYLINE,
+        positions: coordinates,
+        color: 'green',
+      };
+    }
+  }, [stopsAndWaypoints]);
 
   const bkwdTrackGeometry: MapShape[] | undefined = useMemo(() => {
     const matches = stopsAndWaypoints?.bkwdTrackGeom.match(regexTrackGeometry);
@@ -126,18 +174,21 @@ const Home: React.FC<THomeProps> = () => {
         };
       });
 
-      console.log('Coordinates:', coordinates);
       return {
         shapeType: MapShapeType.POLYLINE,
         positions: coordinates,
-        color: 'red',
+        color: 'blue',
       };
     }
-  }, [stopsAndWaypoints, regexTrackGeometry]);
+  }, [stopsAndWaypoints]);
 
-  const handleNavigateToSelectStopPoints = useCallback(() => {
-    selectStopPointsModalRef.current?.present();
-  }, []);
+  const handleNavigateToSelectStopPoints = useCallback(
+    (stopsData: IStopPointsData | undefined) => {
+      setStopsData(stopsData);
+      selectStopPointsModalRef.current?.present();
+    },
+    [],
+  );
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
@@ -148,34 +199,42 @@ const Home: React.FC<THomeProps> = () => {
         backgroundColor="transparent"
       />
       <LeafletView
-        // mapShapes={bkwdTrackGeometry}
+        mapShapes={
+          fwdTrackGeometry &&
+          bkwdTrackGeometry && [fwdTrackGeometry, bkwdTrackGeometry]
+        }
         mapMarkers={
-          fwdStopPointsLocation &&
-          bkwdStopPointsLocation && [
-            ...fwdStopPointsLocation,
-            ...bkwdStopPointsLocation,
-          ]
+          autosPointsLocation
+            ? fwdStopPointsLocation &&
+              bkwdStopPointsLocation && [
+                ...fwdStopPointsLocation,
+                ...bkwdStopPointsLocation,
+                ...autosPointsLocation,
+              ]
+            : fwdStopPointsLocation &&
+              bkwdStopPointsLocation && [
+                ...fwdStopPointsLocation,
+                ...bkwdStopPointsLocation,
+              ]
         }
         mapCenterPosition={DEFAULT_COORDINATE}
         zoom={12}
         onMessageReceived={msg => {
-          if (msg.event === 'onMapMarkerClicked') {
+          if (
+            msg.event === 'onMapMarkerClicked' &&
+            msg.payload?.mapMarkerID !== 'car'
+          ) {
             const findFwdStop = stopsAndWaypoints?.fwdStoppoints.find(
-              stop => stop.stoppointId === msg.payload?.mapMarkerID,
+              stop => stop.stoppointId === +msg.payload?.mapMarkerID!,
             );
             const findbkwdStop = stopsAndWaypoints?.bkwdStoppoints.find(
-              stop => stop.stoppointId === msg.payload?.mapMarkerID,
+              stop => stop.stoppointId === +msg.payload?.mapMarkerID!,
             );
 
-            setStopsData(findFwdStop || findbkwdStop);
-            handleNavigateToSelectStopPoints();
+            handleNavigateToSelectStopPoints(findFwdStop || findbkwdStop);
           }
         }}
       />
-      {/* <WebView
-        source={{ uri: 'https://reactnative.dev/' }}
-        style={{ flex: 1 }}
-      /> */}
       <SelectStopPoints
         title={'Остановка'}
         modalRef={selectStopPointsModalRef}
