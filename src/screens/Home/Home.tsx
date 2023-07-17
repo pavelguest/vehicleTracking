@@ -79,56 +79,48 @@ const Home: React.FC<THomeProps> = () => {
 
   const fwdStopPointsLocation: MapMarker[] | undefined = useMemo(() => {
     return stopsAndWaypoints?.fwdStoppoints.map(stopPoints => {
-      if (stopPoints.location) {
-        const match = regexStopPoints.exec(stopPoints.location);
-        if (match) {
-          return {
-            position: {
-              lng: match[1],
-              lat: match[2],
-            },
-            size: [32, 32],
-            icon: '🚏',
-            id: stopPoints.stoppointId,
-          };
-        }
-      }
+      const match = regexStopPoints.exec(stopPoints.location);
+
+      return {
+        position: {
+          lng: match![1],
+          lat: match![2],
+        },
+        size: [32, 32],
+        icon: '🚏',
+        id: stopPoints.stoppointId.toString(),
+      };
     });
   }, [stopsAndWaypoints]);
 
   const bkwdStopPointsLocation: MapMarker[] | undefined = useMemo(() => {
     return stopsAndWaypoints?.bkwdStoppoints.map(stopPoints => {
-      if (stopPoints.location) {
-        const match = regexStopPoints.exec(stopPoints.location);
-        if (match) {
-          return {
-            position: {
-              lng: match[1],
-              lat: match[2],
-            },
-            size: [32, 32],
-            icon: '🚏',
-            id: stopPoints.stoppointId,
-          };
-        }
-      }
+      const match = regexStopPoints.exec(stopPoints.location);
+
+      return {
+        position: {
+          lng: match![1],
+          lat: match![2],
+        },
+        size: [32, 32],
+        icon: '🚏',
+        id: stopPoints.stoppointId.toString(),
+      };
     });
   }, [stopsAndWaypoints]);
 
   const autosPointsLocation: MapMarker[] | undefined = useMemo(() => {
     return autosData?.autos.map(auto => {
-      if (auto) {
-        return {
-          position: {
-            lng: auto.e,
-            lat: auto.n,
-          },
-          size: [32, 32],
-          icon: '🚌',
-          title: auto.gosNom,
-          id: 'car',
-        };
-      }
+      return {
+        position: {
+          lng: auto.e,
+          lat: auto.n,
+        },
+        size: [32, 32],
+        icon: '🚌',
+        title: auto.gosNom,
+        id: 'car',
+      };
     });
   }, [autosData?.autos]);
 
@@ -149,11 +141,13 @@ const Home: React.FC<THomeProps> = () => {
         };
       });
 
-      return {
-        shapeType: MapShapeType.POLYLINE,
-        positions: coordinates,
-        color: 'green',
-      };
+      return [
+        {
+          shapeType: MapShapeType.POLYLINE,
+          positions: coordinates,
+          color: 'green',
+        },
+      ];
     }
   }, [stopsAndWaypoints]);
 
@@ -174,11 +168,13 @@ const Home: React.FC<THomeProps> = () => {
         };
       });
 
-      return {
-        shapeType: MapShapeType.POLYLINE,
-        positions: coordinates,
-        color: 'blue',
-      };
+      return [
+        {
+          shapeType: MapShapeType.POLYLINE,
+          positions: coordinates,
+          color: 'blue',
+        },
+      ];
     }
   }, [stopsAndWaypoints]);
 
@@ -201,7 +197,7 @@ const Home: React.FC<THomeProps> = () => {
       <LeafletView
         mapShapes={
           fwdTrackGeometry &&
-          bkwdTrackGeometry && [fwdTrackGeometry, bkwdTrackGeometry]
+          bkwdTrackGeometry && [...fwdTrackGeometry, ...bkwdTrackGeometry]
         }
         mapMarkers={
           autosPointsLocation
