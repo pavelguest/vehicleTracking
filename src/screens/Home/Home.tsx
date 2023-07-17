@@ -86,7 +86,7 @@ const Home: React.FC<THomeProps> = () => {
           lng: match![1],
           lat: match![2],
         },
-        size: [32, 32],
+        size: [25, 25],
         icon: '🚏',
         id: stopPoints.stoppointId.toString(),
       };
@@ -102,7 +102,7 @@ const Home: React.FC<THomeProps> = () => {
           lng: match![1],
           lat: match![2],
         },
-        size: [32, 32],
+        size: [25, 25],
         icon: '🚏',
         id: stopPoints.stoppointId.toString(),
       };
@@ -116,7 +116,7 @@ const Home: React.FC<THomeProps> = () => {
           lng: auto.e,
           lat: auto.n,
         },
-        size: [32, 32],
+        size: [25, 25],
         icon: '🚌',
         title: auto.gosNom,
         id: 'car',
