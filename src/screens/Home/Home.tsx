@@ -125,7 +125,7 @@ const Home: React.FC<THomeProps> = () => {
   }, [autosData?.autos]);
 
   const fwdTrackGeometry: MapShape[] | undefined = useMemo(() => {
-    const matches = stopsAndWaypoints?.bkwdTrackGeom.match(regexTrackGeometry);
+    const matches = stopsAndWaypoints?.fwdTrackGeom.match(regexTrackGeometry);
 
     if (matches) {
       const coordinates = matches.map(match => {
