@@ -39,7 +39,7 @@ const DEFAULT_VEHICLE_NUMBER = '01';
 
 const regexStopPoints = /POINT \((\d+\.\d+) (\d+\.\d+)\)/;
 
-const regexTrackGeometry = /\(([\d.]+\s[\d.]+)(?:,\s)?/g;
+const regexTrackGeometry = /(\d+\.\d+)/g;
 
 const Home: React.FC<THomeProps> = () => {
   const styles = useStyles();
@@ -127,24 +127,21 @@ const Home: React.FC<THomeProps> = () => {
   const fwdTrackGeometry: MapShape[] | undefined = useMemo(() => {
     const matches = stopsAndWaypoints?.fwdTrackGeom.match(regexTrackGeometry);
 
-    if (matches) {
-      const coordinates = matches.map(match => {
-        const latlng = match
-          .replace('(', '')
-          .replace(',', '')
-          .trim()
-          .split(' ');
+    const coordinates = [];
 
-        return {
-          lng: latlng[0],
-          lat: latlng[1],
-        };
+    if (matches) {
+      for (let i = 0; i < matches.length; i += 2) {
+        coordinates.push([Number(matches[i]), Number(matches[i + 1])]);
+      }
+
+      const coords = coordinates.map(coord => {
+        return { lng: coord[0], lat: coord[1] };
       });
 
       return [
         {
           shapeType: MapShapeType.POLYLINE,
-          positions: coordinates,
+          positions: coords,
           color: 'green',
         },
       ];
@@ -154,24 +151,21 @@ const Home: React.FC<THomeProps> = () => {
   const bkwdTrackGeometry: MapShape[] | undefined = useMemo(() => {
     const matches = stopsAndWaypoints?.bkwdTrackGeom.match(regexTrackGeometry);
 
-    if (matches) {
-      const coordinates = matches.map(match => {
-        const latlng = match
-          .replace('(', '')
-          .replace(',', '')
-          .trim()
-          .split(' ');
+    const coordinates = [];
 
-        return {
-          lng: latlng[0],
-          lat: latlng[1],
-        };
+    if (matches) {
+      for (let i = 0; i < matches.length; i += 2) {
+        coordinates.push([Number(matches[i]), Number(matches[i + 1])]);
+      }
+
+      const coords = coordinates.map(coord => {
+        return { lng: coord[0], lat: coord[1] };
       });
 
       return [
         {
           shapeType: MapShapeType.POLYLINE,
-          positions: coordinates,
+          positions: coords,
           color: 'blue',
         },
       ];
