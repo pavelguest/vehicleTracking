@@ -22,7 +22,12 @@ const SelectStopPoints: React.FC<TSelectStopPointsProps> = ({
   return (
     <Modal ref={modalRef} setHeader title={title}>
       <View style={combinedContainerStyles}>
-        <Text style={styles.title}>{stopPointsData?.stoppointName}</Text>
+        {stopPointsData?.name && (
+          <Text style={styles.title}>{stopPointsData.name}</Text>
+        )}
+        {stopPointsData?.note && (
+          <Text style={styles.title}>{stopPointsData.note}</Text>
+        )}
       </View>
     </Modal>
   );

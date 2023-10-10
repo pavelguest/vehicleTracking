@@ -11,6 +11,7 @@ export const theme: Theme = {
       icon: COLOR_PRIMARY,
       mapIcon: '#FF0000',
       card: '#414144',
+      button: '#6600ff',
     },
     text: {
       primary: COLOR_PRIMARY,
