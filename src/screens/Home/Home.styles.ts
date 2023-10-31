@@ -7,6 +7,10 @@ export const useStyles = makeUseStyles(({ palette, typography }) => ({
     backgroundColor: palette.background.primary,
     paddingHorizontal: CONTENT_PADDING_H,
   },
+  tabsContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
   buttonContainer: {
     marginTop: 50,
     alignItems: 'center',
