@@ -7,14 +7,14 @@ export const useStyles = makeUseStyles(({ palette, typography }) => ({
     backgroundColor: palette.background.primary,
     paddingHorizontal: CONTENT_PADDING_H,
   },
-  tabsContainer: {
+  titleContainer: {
     marginTop: 20,
+    marginBottom: 40,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonContainer: {
-    marginTop: 50,
-    alignItems: 'center',
-    rowGap: 30,
+  title: {
+    ...typography.h3,
   },
   button: {
     width: '100%',
@@ -25,8 +25,5 @@ export const useStyles = makeUseStyles(({ palette, typography }) => ({
   },
   buttonTitle: {
     ...typography.button,
-  },
-  iconColor: {
-    color: palette.text.primary,
   },
 }));

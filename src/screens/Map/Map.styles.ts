@@ -1,13 +1,31 @@
 import { makeUseStyles } from 'react-native-stylex';
+import {
+  CONTENT_PADDING_H,
+  CONTENT_WIDTH,
+} from '../../core/styling/env/constants';
 
 export const useStyles = makeUseStyles(({ palette, typography }) => ({
   container: {
-    height: 35,
+    flex: 1,
+    backgroundColor: palette.background.primary,
+    paddingHorizontal: CONTENT_PADDING_H,
+  },
+  mapContainer: {
+    flexGrow: 1,
+  },
+  filterContainer: {
+    paddingTop: CONTENT_PADDING_H,
     flexDirection: 'row',
     alignItems: 'center',
-    columnGap: 20,
+    justifyContent: 'space-between',
   },
-  containerTitle: {
+  map: {
+    marginTop: CONTENT_PADDING_H,
+    width: CONTENT_WIDTH,
+    height: '100%',
+  },
+  mapIconContainer: {
+    height: 35,
     paddingHorizontal: 8,
     paddingVertical: 4,
     backgroundColor: palette.background.card,
@@ -17,19 +35,8 @@ export const useStyles = makeUseStyles(({ palette, typography }) => ({
     flexDirection: 'row',
     columnGap: 5,
   },
-  chosen: {
-    backgroundColor: palette.background.activeIcon,
-  },
-  filterTitle: {
+  mapIconTitle: {
     ...typography.body2,
-  },
-  iconContainer: {
-    height: 35,
-    width: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: palette.background.card,
-    borderRadius: 35,
   },
   iconColor: {
     color: palette.text.primary,

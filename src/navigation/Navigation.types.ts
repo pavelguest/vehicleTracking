@@ -2,6 +2,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export type NavigationParams = {
   Home: undefined;
+  Map: undefined;
+  Scanner: undefined;
+  ScannerOld: undefined;
 };
 
 export type NavigationProps = NativeStackNavigationProp<NavigationParams>;

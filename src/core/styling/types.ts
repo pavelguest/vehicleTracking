@@ -19,6 +19,7 @@ export interface Theme {
       icon: string;
       mapIcon: string;
       card: string;
+      button: string;
     };
     text: {
       primary: string;

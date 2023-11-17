@@ -1,20 +1,18 @@
 import { makeUseStyles } from 'react-native-stylex';
-import { CONTENT_PADDING_H } from '../../core/styling/env/constants';
 
 export const useStyles = makeUseStyles(({ palette, typography }) => ({
   container: {
     flex: 1,
     backgroundColor: palette.background.primary,
-    paddingHorizontal: CONTENT_PADDING_H,
   },
-  tabsContainer: {
+  titleContainer: {
     marginTop: 20,
+    marginBottom: 40,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonContainer: {
-    marginTop: 50,
-    alignItems: 'center',
-    rowGap: 30,
+  title: {
+    ...typography.h3,
   },
   button: {
     width: '100%',
@@ -26,7 +24,21 @@ export const useStyles = makeUseStyles(({ palette, typography }) => ({
   buttonTitle: {
     ...typography.button,
   },
-  iconColor: {
-    color: palette.text.primary,
+  centerText: {
+    flex: 1,
+    fontSize: 18,
+    padding: 32,
+    color: '#777',
+  },
+  textBold: {
+    fontWeight: '500',
+    color: '#000',
+  },
+  buttonText: {
+    fontSize: 21,
+    color: 'rgb(0,122,255)',
+  },
+  buttonTouchable: {
+    padding: 16,
   },
 }));

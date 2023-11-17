@@ -15,7 +15,7 @@
 ### Run the app
 iOS
 ```bash
-  yarn ios13
+  yarn ios
 
 ```
 Android
