@@ -3,4 +3,6 @@ export type TAnimatedMarkerProps = {
     longitude: number;
     latitude: number;
   };
+  course: number;
+  vehicle: any;
 };

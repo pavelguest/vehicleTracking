@@ -20,7 +20,9 @@ const MapObject: React.FC<TMapObjectProps> = ({
     case 'point': {
       return (
         <AnimatedMarker
+          vehicle={vehicle}
           coords={{ latitude: vehicle.n, longitude: vehicle.e }}
+          course={vehicle.course}
         />
       );
     }

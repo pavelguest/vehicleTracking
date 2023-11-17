@@ -62,6 +62,10 @@ const Map: React.FC<TMapProps> = () => {
 
   const [autosData, setAutosData] = useState<IAutosData | undefined>(undefined);
 
+  const [currentMovingAutoData, setCurrentMovingAutoData] =
+    useState<any>(undefined);
+  const [currentMarkerIndex, setcurrentMarkerIndex] = useState<number>(0);
+
   const selectStopPointsModalRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
@@ -79,6 +83,8 @@ const Map: React.FC<TMapProps> = () => {
     setInterval(() => {
       getVehiclesTrackingData(DEFAULT_VEHICLE_NUMBER)
         .then(response => {
+          console.log(response);
+
           setAutosData(response.data);
         })
         .catch(error => {

@@ -1,21 +1,25 @@
-import React, { memo, useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { TAnimatedMarkerProps } from './AnimatedMarker.types';
 // import { useStyles } from './AnimatedMarker.styles';
 import { Marker } from 'react-native-maps-osmdroid';
 import Animated, {
   Easing,
+  runOnJS,
   useAnimatedProps,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import CargoIcon from '../../../../components/Icons/Map/CargoIcon';
+import VehicleIcon from './VehicleIcon';
 
 const AnimateMarker = Animated.createAnimatedComponent(Marker) as any;
 
-export const useAnimatedRegion = (location: {
-  longitude: number;
-  latitude: number;
-}) => {
+export const useAnimatedRegion = (
+  location: {
+    longitude: number;
+    latitude: number;
+  },
+  handleChangeCourseAnimation: (isEnd: boolean) => void,
+) => {
   const latitute = useSharedValue(location.latitude);
   const longitude = useSharedValue(location.longitude);
 
@@ -40,16 +44,27 @@ export const useAnimatedRegion = (location: {
           return;
         }
 
-        value.value = withTiming(toValue, {
-          duration,
-          easing,
-        });
+        if (value.value === toValue) {
+          return;
+        }
+
+        value.value = withTiming(
+          toValue,
+          {
+            duration,
+            easing,
+          },
+          finished => {
+            // console.log(value.value, toValue, finished);
+            finished && runOnJS(handleChangeCourseAnimation)(finished);
+          },
+        );
       };
 
       animateValue(latitute, options.latitude);
       animateValue(longitude, options.longitude);
     },
-    [latitute, longitude],
+    [handleChangeCourseAnimation, latitute, longitude],
   );
 
   return {
@@ -58,10 +73,40 @@ export const useAnimatedRegion = (location: {
   };
 };
 
-const AnimatedMarker: React.FC<TAnimatedMarkerProps> = ({ coords }) => {
+const AnimatedMarker: React.FC<TAnimatedMarkerProps> = ({
+  vehicle,
+  coords,
+  course,
+}) => {
   // const styles = useStyles();
 
-  const animatedRegion = useAnimatedRegion(coords);
+  const [oldCoords, setOldCoords] = useState(null);
+  const [angle, setAngle] = useState(null);
+  const [isEndAnimation, setIsEndAnimation] = useState(false);
+
+  const handleChangeCourseAnimation = useCallback((isEnd: boolean) => {
+    setIsEndAnimation(isEnd);
+  }, []);
+
+  const animatedRegion = useAnimatedRegion(coords, handleChangeCourseAnimation);
+
+  useEffect(() => {
+    if (oldCoords && coords) {
+      const rad = Math.atan2(
+        coords.longitude - oldCoords.longitude,
+        coords.latitude - oldCoords.latitude,
+      );
+      const deg = (rad / Math.PI) * 180;
+
+      deg && setAngle(Math.ceil(deg));
+    }
+  }, [coords, oldCoords]);
+
+  useEffect(() => {
+    if (coords) {
+      setOldCoords(coords);
+    }
+  }, [coords]);
 
   useEffect(() => {
     animatedRegion.animate({
@@ -76,7 +121,11 @@ const AnimatedMarker: React.FC<TAnimatedMarkerProps> = ({ coords }) => {
     <AnimateMarker
       animatedProps={animatedRegion.props}
       anchor={{ x: 0.5, y: 0.5 }}>
-      <CargoIcon color={'black'} />
+      {/* <CargoIcon color={'black'} /> */}
+      <VehicleIcon
+        vehicle={vehicle}
+        course={angle && !isEndAnimation ? angle : vehicle?.course}
+      />
     </AnimateMarker>
   );
 };
