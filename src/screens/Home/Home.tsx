@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StatusBar, Text, View } from 'react-native';
+import { Linking, StatusBar, Text, View } from 'react-native';
 import { memo } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THomeProps } from './Home.types';
@@ -10,6 +10,22 @@ import { Tabs } from '../../components/Tabs';
 const Home: React.FC<THomeProps> = ({ navigation }) => {
   const styles = useStyles();
   const [selectedTab, setSelectedTab] = useState(0);
+
+  const googlePlayURL = 'market://details?id=com.proezdnoy59app';
+
+  const isGooglePlayInstalled = async () => {
+    const supported = await Linking.canOpenURL(googlePlayURL);
+
+    return supported;
+  };
+
+  const handleCheckUpdate = useCallback(() => {
+    isGooglePlayInstalled().then(installed => {
+      if (installed) {
+        Linking.openURL(googlePlayURL);
+      }
+    });
+  }, []);
 
   const handleNavigateToScanner = useCallback(() => {
     navigation.navigate('Scanner');
@@ -53,6 +69,9 @@ const Home: React.FC<THomeProps> = ({ navigation }) => {
         </View>
       )}
       <View style={styles.buttonContainer}>
+        <Touchable style={styles.button} onPress={handleCheckUpdate}>
+          <Text style={styles.buttonTitle}>Открыть маркет</Text>
+        </Touchable>
         <Touchable style={styles.button} onPress={handleNavigateToScanner}>
           <Text style={styles.buttonTitle}>Сканер</Text>
         </Touchable>
