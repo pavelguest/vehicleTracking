@@ -167,12 +167,16 @@ const Map: React.FC<TMapProps> = () => {
     return getTrackGeometry(stopsAndWaypoints?.bkwdTrackGeom, 'blue');
   }, [stopsAndWaypoints?.bkwdTrackGeom]);
 
-  const getStopPointsLocation = stopPoints => {
+  const getStopPointsLocation = (stopPoints: IStopPointsData[] | undefined) => {
     if (!stopPoints) {
       return;
     }
     return stopPoints.map(stopPoint => {
       const match = regexStopPoints.exec(stopPoint.location);
+
+      if (!match) {
+        return;
+      }
 
       return {
         coordinate: {

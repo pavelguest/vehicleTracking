@@ -28,6 +28,7 @@ export interface IStopsAndWaPointsData {
 export interface IStopPointsData {
   nodeId: null;
   stoppointId: number;
+  stoppointName: string;
   name: string;
   note: null;
   course: number;
