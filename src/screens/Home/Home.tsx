@@ -39,6 +39,10 @@ const Home: React.FC<THomeProps> = ({ navigation }) => {
     navigation.navigate('Map');
   }, [navigation]);
 
+  const handleNavigateToBleScanner = useCallback(() => {
+    navigation.navigate('BleScanner');
+  }, [navigation]);
+
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <StatusBar
@@ -80,6 +84,9 @@ const Home: React.FC<THomeProps> = ({ navigation }) => {
         </Touchable>
         <Touchable style={styles.button} onPress={handleNavigateToMap}>
           <Text style={styles.buttonTitle}>Карта</Text>
+        </Touchable>
+        <Touchable style={styles.button} onPress={handleNavigateToBleScanner}>
+          <Text style={styles.buttonTitle}>Ble scanner</Text>
         </Touchable>
       </View>
     </SafeAreaView>

@@ -11,6 +11,7 @@ import { Map } from '../screens/Map';
 import { Home } from '../screens/Home';
 import { Scanner } from '../screens/Scanner';
 import { ScannerOld } from '../screens/ScannerOld';
+import { BleScanner } from '../screens/BleScanner';
 
 const Stack = createNativeStackNavigator<NavigationParams>();
 
@@ -54,6 +55,14 @@ const NavigationRoot = () => {
         component={Map}
         options={() => ({
           title: 'Карта',
+          ...headerWithBackConfig,
+        })}
+      />
+      <Stack.Screen
+        name="BleScanner"
+        component={BleScanner}
+        options={() => ({
+          title: 'Ble scanner',
           ...headerWithBackConfig,
         })}
       />

@@ -5,6 +5,7 @@ export type NavigationParams = {
   Map: undefined;
   Scanner: undefined;
   ScannerOld: undefined;
+  BleScanner: undefined;
 };
 
 export type NavigationProps = NativeStackNavigationProp<NavigationParams>;
