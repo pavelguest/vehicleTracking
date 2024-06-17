@@ -1,4 +1,5 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { IBleDevice } from '../screens/BleScanner/BleScanner.types';
 
 export type NavigationParams = {
   Home: undefined;
@@ -6,6 +7,7 @@ export type NavigationParams = {
   Scanner: undefined;
   ScannerOld: undefined;
   BleScanner: undefined;
+  ChangeBleScanner: undefined | { peripheral: IBleDevice };
 };
 
 export type NavigationProps = NativeStackNavigationProp<NavigationParams>;

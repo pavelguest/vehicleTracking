@@ -12,6 +12,7 @@ import { Home } from '../screens/Home';
 import { Scanner } from '../screens/Scanner';
 import { ScannerOld } from '../screens/ScannerOld';
 import { BleScanner } from '../screens/BleScanner';
+import { ChangeBleScanner } from '../screens/ChangeBleScanner';
 
 const Stack = createNativeStackNavigator<NavigationParams>();
 
@@ -63,6 +64,14 @@ const NavigationRoot = () => {
         component={BleScanner}
         options={() => ({
           title: 'Ble scanner',
+          ...headerWithBackConfig,
+        })}
+      />
+      <Stack.Screen
+        name="ChangeBleScanner"
+        component={ChangeBleScanner}
+        options={() => ({
+          title: 'Change Ble Scanner',
           ...headerWithBackConfig,
         })}
       />
