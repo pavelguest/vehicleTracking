@@ -42,7 +42,7 @@ export const DEFAULT_COORDINATE = {
   longitudeDelta: 0.0121,
 };
 
-const DEFAULT_VEHICLE_NUMBER = '01';
+const DEFAULT_VEHICLE_NUMBER = '33';
 
 const regexStopPoints = /POINT \((\d+\.\d+) (\d+\.\d+)\)/;
 
@@ -83,7 +83,7 @@ const Map: React.FC<TMapProps> = () => {
     setInterval(() => {
       getVehiclesTrackingData(DEFAULT_VEHICLE_NUMBER)
         .then(response => {
-          console.log(response);
+          // console.log(response);
 
           setAutosData(response.data);
         })

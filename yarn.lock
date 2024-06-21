@@ -8928,15 +8928,14 @@ __metadata:
 
 "react-native-maps-osmdroid@https://github.com/pavelguest/react-native-maps-osmdroid.git":
   version: 0.27.1-unreleased
-  resolution: "react-native-maps-osmdroid@https://github.com/pavelguest/react-native-maps-osmdroid.git#commit=87caf237391f01a87b34eeb08b4d2a3aae6a6885"
+  resolution: "react-native-maps-osmdroid@https://github.com/pavelguest/react-native-maps-osmdroid.git#commit=cb89ab2ec3180cfb05a5cbcdd5945f509291dacc"
   dependencies:
     "@types/geojson": ^7946.0.7
   peerDependencies:
-    prop-types: ^15.0 || ^16.0
     react: ">= 16.0 || < 17.0"
     react-native: ">= 0.51"
     react-native-web: ^0.11
-  checksum: daa996e373db294b86f06ea4a0af99bb7d46463499c950d4e73fb35ceee4ed0eafd7e7219048e0d23069fe4a75fd9174c10c9f22ae8e4086d8bb7d634a87088e
+  checksum: f16dca14f81a20d9e02fa2900432e3948b149c08d8f3165ff04da0b95bea98b5d0bc2a947f67bea1b64bea35c53199b41bde75fa857e42ac2c954d7d6bc74e6d
   languageName: node
   linkType: hard
 

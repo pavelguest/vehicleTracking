@@ -13,6 +13,9 @@ import { useStyles } from './ChangeBleScanner.styles';
 import { Touchable } from '../../components/Touchable';
 import BleManager from 'react-native-ble-manager';
 
+const CHARACTERISTIC_UUID = 'characteristic uuid...';
+const NAME_PREFIX = 'name prefix...';
+
 const ChangeBleScanner: React.FC<TChangeBleScannerProps> = ({
   navigation,
   route,
@@ -40,17 +43,20 @@ const ChangeBleScanner: React.FC<TChangeBleScannerProps> = ({
         .then(() => {
           console.log('Connected to ' + peripheral.id);
           setIsConnected(true);
-
-          // const characteristicUUID = '';
+          return BleManager.retrieveServices(peripheral.id);
+        })
+        .then(() => {
           // const base64String = btoa(newName);
+          let encoder = new TextEncoder();
+          let bytes = Array.from(encoder.encode(NAME_PREFIX + newName));
 
-          // return BleManager.write(
-          //   peripheral.id,
-          //   serviceUUID,
-          //   characteristicUUID,
-          //   base64String,
-          // );
-          return BleManager.setName(newName);
+          return BleManager.write(
+            peripheral.id,
+            serviceUUID,
+            CHARACTERISTIC_UUID,
+            bytes,
+            32,
+          );
         })
         .then(() => {
           Alert.alert('Выполнено', 'Имя маячка изменено');
@@ -63,7 +69,7 @@ const ChangeBleScanner: React.FC<TChangeBleScannerProps> = ({
         })
         .catch(error => {
           console.error(error);
-          Alert.alert('Ошибка', 'Имя маячка изменить не удалось');
+          Alert.alert('Ошибка', error);
           setIsConnected(false);
           setIsLoading(false);
         });
@@ -71,7 +77,6 @@ const ChangeBleScanner: React.FC<TChangeBleScannerProps> = ({
       // Alert.alert('Error', 'Please enter pin code and new name');
     }
   }, [newName, peripheral]);
-
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <StatusBar

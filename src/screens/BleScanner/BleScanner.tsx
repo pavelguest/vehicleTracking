@@ -30,7 +30,13 @@ const BeaconView: React.FC<IBeaconViewProps> = ({ item, onPress }) => {
 
   return (
     <Touchable style={styles.beaconContainer} onPress={onPress}>
-      <Text style={styles.bleItemTitle}>{item.name}</Text>
+      {item.id && <Text style={styles.bleItemTitle}>{`id: ${item.id}`}</Text>}
+      {item.name && (
+        <Text style={styles.bleItemTitle}>{`name: ${item.name}`}</Text>
+      )}
+      {item.rssi && (
+        <Text style={styles.bleItemTitle}>{`rssi: ${item.rssi}`}</Text>
+      )}
     </Touchable>
   );
 };
@@ -82,7 +88,7 @@ const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 const SECONDS_TO_SCAN_FOR = 3;
-const SERVICE_UUIDS: string[] = ['b2352b64-cec0-4afb-bca5-84c3eedbe704'];
+const SERVICE_UUIDS: string[] = []; // add service uuids...
 const ALLOW_DUPLICATES = true;
 
 export const startScan = (
@@ -113,6 +119,8 @@ const BleScanner: React.FC<TBleScannerProps> = ({ navigation }) => {
   const styles = useStyles();
   const [peripherals, setPeripherals] = useState<IBleDevice[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  console.log(peripherals);
 
   useEffect(() => {
     try {
@@ -169,7 +177,7 @@ const BleScanner: React.FC<TBleScannerProps> = ({ navigation }) => {
   );
 
   const handleDiscoverPeripheral = (peripheral: IBleDevice) => {
-    if (peripheral?.advertising.serviceUUIDs[0] === SERVICE_UUIDS[0]) {
+    if (SERVICE_UUIDS.includes(peripheral?.advertising.serviceUUIDs[0])) {
       setPeripherals(prevPeripherals => {
         const index = prevPeripherals.findIndex(
           p => p.name === peripheral.name,
