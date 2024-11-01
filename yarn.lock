@@ -8863,12 +8863,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-ble-manager@npm:^11.5.3":
-  version: 11.5.3
-  resolution: "react-native-ble-manager@npm:11.5.3"
+"react-native-ble-manager@npm:^11.5.6":
+  version: 11.5.6
+  resolution: "react-native-ble-manager@npm:11.5.6"
   peerDependencies:
     react-native: ">=0.60.0"
-  checksum: 1e69c4e19c19d1800dc4ac0656a254bc66b0fec7f0a93b710864054455331093e9851c7f46de48102837f945becf53fcfc4061dd106e629b7b23b0637eaf9fcb
+  checksum: d4a1b86fa382bfea5277b23a90597dc007760354b56febfaa425b234039c369819c1d3207c4b71a9b853034ca8854b973f343ffa8eb2b496691b1624b703b12e
   languageName: node
   linkType: hard
 
@@ -10551,7 +10551,7 @@ __metadata:
     prettier: ^2.8.8
     react: 18.2.0
     react-native: 0.73.8
-    react-native-ble-manager: ^11.5.3
+    react-native-ble-manager: ^11.5.6
     react-native-bootsplash: ^5.5.3
     react-native-camera: ^4.2.1
     react-native-device-info: ^10.8.0

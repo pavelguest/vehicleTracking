@@ -1,4 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   FlatList,
   NativeEventEmitter,
@@ -35,7 +41,14 @@ const BeaconView: React.FC<IBeaconViewProps> = ({ item, onPress }) => {
         <Text style={styles.bleItemTitle}>{`name: ${item.name}`}</Text>
       )}
       {item.rssi && (
-        <Text style={styles.bleItemTitle}>{`rssi: ${item.rssi}`}</Text>
+        <Text style={styles.bleItemTitle}>{`distance: ${calculateDistance(
+          item.rssi,
+        ).toFixed(2)} meters`}</Text>
+      )}
+      {item.rssi && (
+        <Text style={styles.bleItemTitle}>{`rssi: ${item.rssi.toFixed(
+          2,
+        )}`}</Text>
       )}
     </Touchable>
   );
@@ -91,6 +104,37 @@ const SECONDS_TO_SCAN_FOR = 3;
 const SERVICE_UUIDS: string[] = []; // add service uuids...
 const ALLOW_DUPLICATES = true;
 
+function calculateDistance(rssi: number, measure = -69, multiplier = 2) {
+  return Math.pow(10, (measure - rssi) / (10 * multiplier));
+}
+
+function addRssiValueAndGetAverage(
+  deviceId: string,
+  newValue: number,
+  rssiRef: React.RefObject<{ [key: string]: number[] }>,
+  maxSize = 3,
+) {
+  const rssiArrays = rssiRef.current;
+
+  if (!rssiArrays) {
+    return;
+  }
+
+  if (!rssiArrays[deviceId]) {
+    rssiArrays[deviceId] = [];
+  }
+  const values = rssiArrays[deviceId];
+  values.push(newValue);
+
+  if (values.length > maxSize) {
+    values.shift();
+  }
+
+  const averageRssi =
+    values.reduce((acc, value) => acc + value, 0) / values.length;
+  return averageRssi;
+}
+
 export const startScan = (
   setRefreshing?: Dispatch<SetStateAction<boolean>>,
 ): void => {
@@ -119,8 +163,36 @@ const BleScanner: React.FC<TBleScannerProps> = ({ navigation }) => {
   const styles = useStyles();
   const [peripherals, setPeripherals] = useState<IBleDevice[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const rssiRef = useRef<{ [key: string]: number[] }>({});
 
-  console.log(peripherals);
+  const handleDiscoverPeripheral = (peripheral: IBleDevice) => {
+    if (SERVICE_UUIDS.includes(peripheral?.advertising.serviceUUIDs[0])) {
+      console.log(peripheral);
+      setPeripherals(prevPeripherals => {
+        const index = prevPeripherals.findIndex(
+          p => p.id === peripheral.id, // Use id for matching
+        );
+
+        if (index !== -1) {
+          // Обновляем существующий периферийный маячок
+          const updatedPeripherals = [...prevPeripherals];
+          const averageRssi = addRssiValueAndGetAverage(
+            peripheral.id,
+            peripheral.rssi,
+            rssiRef,
+          );
+          updatedPeripherals[index] = {
+            ...peripheral,
+            rssi: averageRssi ? averageRssi : 0,
+          };
+          return updatedPeripherals;
+        } else {
+          // Добавляем новый периферийный маячок
+          return [...prevPeripherals, peripheral];
+        }
+      });
+    }
+  };
 
   useEffect(() => {
     try {
@@ -163,6 +235,7 @@ const BleScanner: React.FC<TBleScannerProps> = ({ navigation }) => {
     setTimeout(() => {
       try {
         setPeripherals([]);
+        rssiRef.current = {}; // Clear rssiRef
         startScan();
       } catch (error) {
         return;
@@ -170,35 +243,10 @@ const BleScanner: React.FC<TBleScannerProps> = ({ navigation }) => {
     }, 1000);
   }, []);
 
-  console.log(
-    'serviceData',
-    peripherals[0]?.advertising.serviceData,
-    peripherals[1]?.advertising.serviceData,
-  );
-
-  const handleDiscoverPeripheral = (peripheral: IBleDevice) => {
-    if (SERVICE_UUIDS.includes(peripheral?.advertising.serviceUUIDs[0])) {
-      setPeripherals(prevPeripherals => {
-        const index = prevPeripherals.findIndex(
-          p => p.name === peripheral.name,
-        );
-
-        if (index !== -1) {
-          // Обновляем существующий периферийный маячок
-          const updatedPeripherals = [...prevPeripherals];
-          updatedPeripherals[index] = peripheral;
-          return updatedPeripherals;
-        } else {
-          // Добавляем новый периферийный маячок
-          return [...prevPeripherals, peripheral];
-        }
-      });
-    }
-  };
-
   const onRefresh = () => {
     setRefreshing(true);
     setPeripherals([]);
+    rssiRef.current = {}; // Clear rssiRef
     startScan(setRefreshing);
   };
 
